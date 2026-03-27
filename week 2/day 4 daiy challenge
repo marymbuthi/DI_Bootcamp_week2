@@ -1,0 +1,68 @@
+import string
+import re
+
+class Text:
+    def __init__(self, text):
+        self.text = text
+
+    def _get_words(self):
+        """Helper method to clean and split text into words."""
+        # Lowercasing and splitting helps ensure 'Word' and 'word' are treated the same
+        return self.text.lower().split()
+
+    def word_frequency(self, word):
+        words = self._get_words()
+        count = words.count(word.lower())
+        return count if count > 0 else f"The word '{word}' was not found."
+
+    def most_common_word(self):
+        words = self._get_words()
+        if not words:
+            return None
+        
+        frequencies = {}
+        for w in words:
+            frequencies[w] = frequencies.get(w, 0) + 1
+            
+        # Find the key with the maximum value
+        most_common = max(frequencies, key=frequencies.get)
+        return most_common
+
+    def unique_words(self):
+        words = self._get_words()
+        # Sets automatically handle uniqueness
+        return list(set(words))
+
+    @classmethod
+    def from_file(cls, file_path):
+        try:
+            with open(file_path, 'r', encoding='utf-8') as file:
+                content = file.read()
+            return cls(content)
+        except FileNotFoundError:
+            return "Error: File not found."
+
+class TextModification(Text):
+    def remove_punctuation(self):
+        # string.punctuation contains: !"#$%&'()*+,-./:;<=>?@[\]^_`{|}~
+        translator = str.maketrans('', '', string.punctuation)
+        self.text = self.text.translate(translator)
+        return self.text
+
+    def remove_stop_words(self):
+        stop_words = {"a", "an", "the", "and", "is", "in", "it", "of", "to", "with", "as", "for"}
+        words = self.text.split()
+        filtered_words = [w for w in words if w.lower() not in stop_words]
+        self.text = " ".join(filtered_words)
+        return self.text
+
+    def remove_special_characters(self):
+        # Regex [^a-zA-Z0-9\s] keeps only alphanumeric characters and whitespace
+        self.text = re.sub(r'[^a-zA-Z0-9\s]', '', self.text)
+        return self.text
+
+# --- Example Usage ---
+# sample = "Hello world! This is a test. Hello again."
+# analyzer = TextModification(sample)
+# print(analyzer.unique_words())
+# print(analyzer.remove_punctuation())

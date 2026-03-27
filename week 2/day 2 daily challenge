@@ -1,0 +1,71 @@
+class Farm:
+    def __init__(self, farm_name):
+        # Step 2: Initialize attributes
+        self.name = farm_name
+        self.animals = {}
+
+    # Step 3 & 8: Implement add_animal with **kwargs for multiple animals
+    def add_animal(self, animal_type=None, count=1, **kwargs):
+        # Handle standard arguments (e.g., add_animal('cow', 5))
+        if animal_type:
+            if animal_type in self.animals:
+                self.animals[animal_type] += count
+            else:
+                self.animals[animal_type] = count
+        
+        # Handle **kwargs (e.g., add_animal(sheep=2, goat=12))
+        for name, qty in kwargs.items():
+            if name in self.animals:
+                self.animals[name] += qty
+            else:
+                self.animals[name] = qty
+
+    # Step 4: Implement get_info with specific formatting
+    def get_info(self):
+        info = f"{self.name}'s farm\n\n"
+        for animal, count in self.animals.items():
+            # Using f-string padding to align columns
+            info += f"{animal:<10} : {count}\n"
+        
+        info += "\n    E-I-E-I-O!"
+        return info
+
+    # Step 6: Get sorted list of animal keys
+    def get_animal_types(self):
+        return sorted(self.animals.keys())
+
+    # Step 7: Construct a short summary sentence
+    def get_short_info(self):
+        types = self.get_animal_types()
+        # Pluralize names: add 's' if count > 1 (simple logic)
+        plural_animals = []
+        for a in types:
+            name = a + "s" if self.animals[a] > 1 else a
+            plural_animals.append(name)
+        
+        # Formatting the list into a sentence: "a, b and c"
+        if len(plural_animals) > 1:
+            list_str = ", ".join(plural_animals[:-1]) + " and " + plural_animals[-1]
+        else:
+            list_str = plural_animals[0]
+            
+        return f"{self.name}’s farm has {list_str}."
+
+# --- Step 5: Test the Code ---
+
+macdonald = Farm("McDonald")
+
+# Testing standard addition
+macdonald.add_animal('cow', 5)
+macdonald.add_animal('sheep')
+macdonald.add_animal('sheep')
+
+# Testing the Bonus Step 8 (**kwargs)
+macdonald.add_animal(goat=12)
+
+print(macdonald.get_info())
+print("\n" + "-"*20 + "\n")
+
+# Testing Bonus Step 6 & 7
+print(f"Animal Types: {macdonald.get_animal_types()}")
+print(macdonald.get_short_info())

@@ -1,0 +1,117 @@
+import string
+import random
+from datetime import datetime
+from faker import Faker
+
+# ==========================================
+#  EXERCISE 1: CURRENCIES (Dunder Methods)
+# ==========================================
+class Currency:
+    def __init__(self, currency, amount):
+        self.currency = currency
+        self.amount = amount
+
+    def __str__(self):
+        # Adds an 's' for plural unless amount is 1
+        label = self.currency + 's' if self.amount != 1 else self.currency
+        return f"{self.amount} {label}"
+
+    def __repr__(self):
+        return self.__str__()
+
+    def __int__(self):
+        return self.amount
+
+    def __add__(self, other):
+        if isinstance(other, int):
+            return self.amount + other
+        if isinstance(other, Currency):
+            if self.currency != other.currency:
+                raise TypeError(f"Cannot add between Currency type <{self.currency}> and <{other.currency}>")
+            return self.amount + other.amount
+        raise TypeError("Unsupported type for addition")
+
+    def __iadd__(self, other):
+        if isinstance(other, int):
+            self.amount += other
+        elif isinstance(other, Currency):
+            if self.currency != other.currency:
+                raise TypeError(f"Cannot add between Currency type <{self.currency}> and <{other.currency}>")
+            self.amount += other.amount
+        return self
+
+print("--- Exercise 1: Currencies ---")
+c1 = Currency('dollar', 5)
+c2 = Currency('dollar', 10)
+print(f"c1: {c1}")
+print(f"int(c1): {int(c1)}")
+print(f"c1 + 5: {c1 + 5}")
+print(f"c1 + c2: {c1 + c2}")
+c1 += 10
+print(f"c1 after += 10: {c1}\n")
+
+
+# ==========================================
+#  EXERCISE 2: IMPORT (Mock Setup)
+# ==========================================
+def mock_sum_func(a, b):
+    print(f"The sum of {a} and {b} is: {a + b}")
+
+print("--- Exercise 2: Import Function ---")
+mock_sum_func(15, 25)
+print()
+
+
+# ==========================================
+#  EXERCISE 3: STRING MODULE
+# ==========================================
+print("--- Exercise 3: Random String ---")
+all_letters = string.ascii_letters
+random_res = ''.join(random.choice(all_letters) for _ in range(5))
+print(f"Random 5-char string: {random_res}\n")
+
+
+# ==========================================
+# EXERCISE 4, 5 & 6: DATETIME
+# ==========================================
+print("--- Exercise 4, 5 & 6: Datetime ---")
+
+# Ex 4: Current Date
+now = datetime.now()
+print(f"Today's Date: {now.strftime('%Y-%m-%d %H:%M:%S')}")
+
+# Ex 5: Time until Jan 1st
+next_year = now.year + 1
+new_year = datetime(next_year, 1, 1)
+time_left = new_year - now
+print(f"Time until Jan 1st: {time_left.days} days and {time_left.seconds//3600} hours")
+
+# Ex 6: Minutes Lived
+def minutes_lived(birth_str):
+    birth_date = datetime.strptime(birth_str, "%Y-%m-%d")
+    delta = datetime.now() - birth_date
+    minutes = int(delta.total_seconds() / 60)
+    print(f"Born {birth_str}: You've lived ~{minutes:,} minutes.\n")
+
+minutes_lived("2000-01-01")
+
+
+# ==========================================
+#  EXERCISE 7: FAKER MODULE
+# ==========================================
+print("--- Exercise 7: Faker Data ---")
+fake = Faker()
+users_list = []
+
+def generate_users(count):
+    for _ in range(count):
+        user = {
+            "name": fake.name(),
+            "address": fake.address().replace("\n", ", "),
+            "language_code": fake.language_code()
+        }
+        users_list.append(user)
+
+generate_users(3)
+for u in users_list:
+    print(u)

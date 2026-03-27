@@ -1,0 +1,42 @@
+import requests
+import time
+
+def get_load_time(url):
+    """
+    Measures the time taken to get a full response from a URL.
+    """
+    # Ensure the URL starts with http to avoid errors
+    if not url.startswith('http'):
+        url = 'https://' + url
+        
+    try:
+        # Capture start time
+        start_time = time.time()
+        
+        # Perform the GET request
+        response = requests.get(url, timeout=10)
+        
+        # Capture end time
+        end_time = time.time()
+        
+        # Calculate the duration
+        loading_time = end_time - start_time
+        
+        # Check if the request was successful
+        if response.status_status_code == 200:
+            return round(loading_time, 4)
+        else:
+            return f"Error: Received status {response.status_code}"
+            
+    except requests.exceptions.RequestException as e:
+        return f"Connection Error: {e}"
+
+# --- Testing with multiple sites ---
+sites = ["google.com", "ynet.co.il", "imdb.com", "wikipedia.org"]
+
+print(f"{'Site':<20} | {'Load Time (seconds)':<20}")
+print("-" * 45)
+
+for site in sites:
+    duration = get_load_time(site)
+    print(f"{site:<20} | {duration:<20}")

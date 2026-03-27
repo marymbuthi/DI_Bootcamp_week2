@@ -1,0 +1,90 @@
+#=======p1========#
+import random
+
+class Game:
+    def __init__(self):
+        self.valid_items = ['rock', 'paper', 'scissors']
+
+    def get_user_item(self):
+        """Asks and validates the user's move."""
+        while True:
+            user_input = input("Select an item (rock/paper/scissors): ").lower().strip()
+            if user_input in self.valid_items:
+                return user_input
+            print("Invalid selection. Please try again.")
+
+    def get_computer_item(self):
+        """Randomly selects the computer's move."""
+        return random.choice(self.valid_items)
+
+    def get_game_result(self, user_item, computer_item):
+        """Determines the winner based on RPS rules."""
+        if user_item == computer_item:
+            return "draw"
+        
+        # Win conditions for the user
+        win_conditions = {
+            "rock": "scissors",
+            "paper": "rock",
+            "scissors": "paper"
+        }
+        
+        if win_conditions[user_item] == computer_item:
+            return "win"
+        else:
+            return "loss"
+
+    def play(self):
+        """Executes one full round and returns the result."""
+        user_choice = self.get_user_item()
+        computer_choice = self.get_computer_item()
+        result = self.get_game_result(user_choice, computer_choice)
+        
+        print(f"You chose: {user_choice}. Computer chose: {computer_choice}.")
+        print(f"Result: {result.upper()}!")
+        
+        return result
+        #=====p2========#
+        from game import Game
+
+def get_user_menu_choice():
+    """Displays the main menu and validates the selection."""
+    print("\n--- Main Menu ---")
+    print("(g) Play a new game")
+    print("(x) Show scores and quit")
+    
+    while True:
+        choice = input("Select an option: ").lower().strip()
+        if choice in ['g', 'x']:
+            return choice
+        print("Invalid choice. Enter 'g' to play or 'x' to exit.")
+
+def print_results(results):
+    """Formats and prints the final score summary."""
+    print("\n--- Game Summary ---")
+    print(f"Wins:   {results['win']}")
+    print(f"Losses: {results['loss']}")
+    print(f"Draws:  {results['draw']}")
+    print("\nThank you for playing!")
+
+def main():
+    # Initialize results dictionary
+    results = {"win": 0, "loss": 0, "draw": 0}
+    
+    while True:
+        user_choice = get_user_menu_choice()
+        
+        if user_choice == 'g':
+            # Create a new Game instance for each round
+            current_round = Game()
+            outcome = current_round.play()
+            
+            # Update the results dictionary
+            results[outcome] += 1
+            
+        elif user_choice == 'x':
+            print_results(results)
+            break
+
+if __name__ == "__main__":
+    main()
