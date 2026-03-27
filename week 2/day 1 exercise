@@ -1,5 +1,5 @@
 # ==========================================
-# 🌟 EXERCISE 1: CATS
+#  EXERCISE 1: CATS
 # ==========================================
 class Cat:
     def __init__(self, cat_name, cat_age):
@@ -25,7 +25,7 @@ print(f"The oldest cat is {oldest.name}, and is {oldest.age} years old.\n")
 
 
 # ==========================================
-# 🌟 EXERCISE 2: DOGS
+# EXERCISE 2: DOGS
 # ==========================================
 class Dog:
     def __init__(self, name, height):
@@ -61,7 +61,7 @@ else:
 
 
 # ==========================================
-# 🌟 EXERCISE 3: SONG PRODUCER
+# EXERCISE 3: SONG PRODUCER
 # ==========================================
 class Song:
     def __init__(self, lyrics):
@@ -82,7 +82,7 @@ print()
 
 
 # ==========================================
-# 🌟 EXERCISE 4: AFTERNOON AT THE ZOO
+#  EXERCISE 4: AFTERNOON AT THE ZOO
 # ==========================================
 class Zoo:
     def __init__(self, zoo_name):
