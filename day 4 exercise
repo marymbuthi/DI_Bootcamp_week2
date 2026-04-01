@@ -1,0 +1,102 @@
+import random
+import json
+import os
+
+# ==========================================
+# PREPARATION: Create the Word File
+# ==========================================
+def setup_word_file():
+    """Creates a dummy sowpods.txt if it doesn't exist for Exercise 1."""
+    filename = "sowpods.txt"
+    if not os.path.exists(filename):
+        words = ["apple", "banana", "computer", "python", "learning", "random", 
+                 "sentence", "generator", "science", "mountain", "ocean", "forest"]
+        with open(filename, "w") as f:
+            f.write("\n".join(words))
+
+# ==========================================
+# EXERCISE 1: RANDOM SENTENCE GENERATOR
+# ==========================================
+
+def get_words_from_file(file_path):
+    """Step 1: Read words from a file and return a list."""
+    with open(file_path, "r") as file:
+        content = file.read()
+        word_list = content.split()
+        return word_list
+
+def get_random_sentence(length):
+    """Step 2: Generate a random sentence of a specific length."""
+    words = get_words_from_file("sowpods.txt")
+    # Select random words 'length' times
+    selected_words = [random.choice(words) for _ in range(length)]
+    # Join and lowercase
+    sentence = " ".join(selected_words).lower()
+    return sentence
+
+def main_sentence_generator():
+    """Step 3: Handle user input and flow for Exercise 1."""
+    print("--- Exercise 1: Random Sentence Generator ---")
+    setup_word_file()
+    
+    user_input = input("Enter desired sentence length (2-20): ")
+    
+    try:
+        length = int(user_input)
+        if 2 <= length <= 20:
+            result = get_random_sentence(length)
+            print(f"Generated Sentence: {result}\n")
+        else:
+            print("Error: Number must be between 2 and 20.\n")
+    except ValueError:
+        print("Error: Please enter a valid integer.\n")
+
+
+# ==========================================
+#  EXERCISE 2: WORKING WITH JSON
+# ==========================================
+
+def run_json_exercise():
+    print("--- Exercise 2: JSON Manipulation ---")
+    
+    sampleJson = """{ 
+       "company":{ 
+          "employee":{ 
+             "name":"emma",
+             "payable":{ 
+                "salary":7000,
+                "bonus":800
+             }
+          }
+       }
+    }"""
+
+    # Step 1: Load the JSON string
+    data = json.loads(sampleJson)
+
+    # Step 2: Access the nested “salary” key
+    salary = data["company"]["employee"]["payable"]["salary"]
+    print(f"Accessed Salary: {salary}")
+
+    # Step 3: Add the “birth_date” key to the employee dictionary
+    data["company"]["employee"]["birth_date"] = "1992-04-12"
+    print("Added 'birth_date' to employee record.")
+
+    # Step 4: Save the modified JSON to a file
+    output_file = "modified_company.json"
+    with open(output_file, "w") as f:
+        json.dump(data, f, indent=4)
+    
+    print(f"Modified JSON saved to: {output_file}\n")
+
+
+# ==========================================
+# RUNNING BOTH EXERCISES
+# ==========================================
+
+if __name__ == "__main__":
+    # Run Exercise 1
+    main_sentence_generator()
+    
+    # Run Exercise 2
+    run_json_exercise()

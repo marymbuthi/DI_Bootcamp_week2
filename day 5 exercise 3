@@ -1,0 +1,125 @@
+import matplotlib.pyplot as plt
+from pyowm import OWM
+from datetime import datetime
+import pytz
+import sys
+
+# ==========================================
+# CONFIGURATION
+# ==========================================
+API_KEY = 'your_api_key_here'  # <--- REPLACE WITH YOUR ACTUAL API KEY
+try:
+    owm = OWM(API_KEY)
+    mgr = owm.weather_manager()
+    reg = owm.city_id_registry()
+except Exception as e:
+    print(f"Configuration Error: {e}")
+
+# ==========================================
+# PART 1: WEATHER LOGIC FUNCTIONS
+# ==========================================
+
+def get_city_id(city_name):
+    """Retrieves the City ID from the OWM registry."""
+    locations = reg.locations_for(city_name)
+    if locations:
+        # We take the first match found
+        return locations[0].id
+    return None
+
+def display_current_weather(city_name):
+    """Fetches and prints current weather, wind, and sun times."""
+    city_id = get_city_id(city_name)
+    if not city_id:
+        print(f"Could not find ID for {city_name}.")
+        return None
+
+    # Fetch observation by ID
+    obs = mgr.weather_at_id(city_id)
+    w = obs.weather
+
+    # Wind and Sun info
+    wind = w.wind()
+    # Convert timestamps to readable format
+    sunrise = datetime.fromtimestamp(w.sunrise_time()).strftime('%H:%M:%S')
+    sunset = datetime.fromtimestamp(w.sunset_time()).strftime('%H:%M:%S')
+
+    print(f"\n--- Current Weather: {city_name} (ID: {city_id}) ---")
+    print(f"Status: {w.detailed_status}")
+    print(f"Humidity: {w.humidity}%")
+    print(f"Wind: {wind['speed']} m/s at {wind.get('deg', 0)}°")
+    print(f"Sunrise: {sunrise} | Sunset: {sunset}")
+    
+    return city_id
+
+# ==========================================
+# PART 2: GUI & PLOTTING FUNCTIONS
+# ==========================================
+
+def init_plot(city_name):
+    """Sets up the visual styling for the Matplotlib chart."""
+    plt.ylabel('Humidity (%)', fontweight='bold')
+    plt.title(f'3-Hour Humidity Forecast: {city_name}', fontsize=14, pad=20)
+    plt.ylim(0, 110) # 110 gives room for the text labels above the bars
+    plt.grid(axis='y', linestyle='--', alpha=0.3)
+
+def write_humidity_on_bar_chart(bars):
+    """Adds the percentage text label on top of each bar."""
+    for bar in bars:
+        height = bar.get_height()
+        plt.text(bar.get_x() + bar.get_width()/2., height + 1,
+                f'{int(height)}%', ha='center', va='bottom', fontsize=10)
+
+def plot_humidity_forecast(city_id, city_name):
+    """Retrieves 3-hour forecast and generates the bar chart GUI."""
+    print(f"Fetching forecast for {city_name}...")
+    
+    # Retrieve 3-hour interval forecast
+    forecast_mgr = mgr.forecast_at_id(city_id, '3h')
+    forecast = forecast_mgr.forecast
+    
+    times = []
+    humidities = []
+
+    # Take the first 8 intervals (representing 24 hours)
+    for weather in forecast.weathers[:8]:
+        # Convert UTC timestamp to local HH:MM
+        dt = datetime.fromtimestamp(weather.reference_time())
+        times.append(dt.strftime('%H:%M'))
+        humidities.append(weather.humidity)
+
+    # Create the figure
+    plt.figure(figsize=(10, 6))
+    init_plot(city_name)
+    
+    # Create bars with a color gradient feel
+    bars = plt.bar(times, humidities, color='#3498db', edgecolor='#2980b9', width=0.6)
+    
+    # Add data labels
+    write_humidity_on_bar_chart(bars)
+    
+    print("Displaying GUI...")
+    plt.tight_layout()
+    plt.show()
+
+# ==========================================
+# MAIN EXECUTION LOOP
+# ==========================================
+
+def main():
+    print("Welcome to the Python Weather Dashboard")
+    user_city = input("Enter a city name (e.g., Paris, FR): ").strip()
+
+    if not user_city:
+        print("Invalid input. Exiting.")
+        return
+
+    # 1. Show console data
+    city_id = display_current_weather(user_city)
+
+    # 2. If city is valid, launch the GUI
+    if city_id:
+        plot_humidity_forecast(city_id, user_city)
+
+if __name__ == "__main__":
+    main()

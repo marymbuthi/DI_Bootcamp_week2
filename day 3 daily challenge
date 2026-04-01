@@ -1,0 +1,101 @@
+import math
+import turtle
+
+class Circle:
+    def __init__(self, radius=None, diameter=None):
+        # Allow defining by either radius or diameter
+        if radius is not None:
+            self.radius = radius
+        elif diameter is not None:
+            self.radius = diameter / 2
+        else:
+            raise ValueError("Please specify either 'radius' or 'diameter'.")
+
+    @property
+    def diameter(self):
+        return self.radius * 2
+
+    @diameter.setter
+    def diameter(self, value):
+        self.radius = value / 2
+
+    @property
+    def area(self):
+        return math.pi * (self.radius ** 2)
+
+    # --- Dunder Methods ---
+
+    def __str__(self):
+        return f"Circle (R: {self.radius:.1f}, D: {self.diameter:.1f}, Area: {self.area:.1f})"
+
+    def __repr__(self):
+        return f"Circle({self.radius})"
+
+    def __add__(self, other):
+        # Adding two circles creates a new one with combined radii
+        if isinstance(other, Circle):
+            return Circle(radius=self.radius + other.radius)
+        return NotImplemented
+
+    # Comparison methods for sorting and logic
+    def __gt__(self, other):
+        return self.radius > other.radius
+
+    def __lt__(self, other):
+        return self.radius < other.radius
+
+    def __eq__(self, other):
+        return self.radius == other.radius
+
+# --- Main Program & Testing ---
+
+# 1. Create instances
+c1 = Circle(radius=20)
+c2 = Circle(diameter=60)  # Radius will be 30
+c3 = c1 + c2              # New circle with radius 50
+
+# 2. Print attributes
+print("--- Circle Details ---")
+print(f"C1: {c1}")
+print(f"C2: {c2}")
+print(f"C3 (C1 + C2): {c3}")
+print(f"Is C2 bigger than C1? {c2 > c1}\n")
+
+# 3. Sort a list of circles
+circle_list = [c3, c1, c2, Circle(radius=10)]
+circle_list.sort()
+
+print("--- Sorted Circle List ---")
+for c in circle_list:
+    print(c)
+
+# --- Bonus: Turtle Visualization ---
+def draw_sorted_circles(circles):
+    print("\nOpening Turtle Graphics...")
+    screen = turtle.Screen()
+    screen.setup(800, 400)
+    t = turtle.Turtle()
+    t.speed(3)
+    
+    # Starting position
+    start_x = -300
+    
+    for c in circles:
+        t.penup()
+        t.goto(start_x, -c.radius) # Adjust Y so they sit on a "line"
+        t.pendown()
+        t.circle(c.radius)
+        
+        # Label the circle
+        t.penup()
+        t.goto(start_x, -c.radius - 20)
+        t.write(f"R:{int(c.radius)}", align="center")
+        
+        # Move forward for the next circle
+        start_x += (c.diameter + 20)
+        
+    print("Click the graphic window to close.")
+    screen.exitonclick()
+
+# Execute drawing
+draw_sorted_circles(circle_list)

@@ -1,0 +1,21 @@
+class Farm:
+    def __init__(self, farm_name):
+        self.name = farm_name
+        self.animals = {}
+
+        def add_animal(self, animal_type, count=1):
+        if animal_type in self.animals:
+            self.animals[animal_type] += count
+        else:
+            self.animals[animal_type] = count 
+
+my_farm = Farm("Sunny Acres")
+
+my_farm.add_animal("cow")           # new animal, default count = 1
+my_farm.add_animal("pig", 3)        # new animal, count = 3
+my_farm.add_animal("horse", 2)      # new animal, count = 2
+my_farm.add_animal("cow", 4)        # cow already exists → 1 + 4 = 5
+
+
+print(my_farm.name)     # Sunny Acres
+print(my_farm.animals)  # {}
